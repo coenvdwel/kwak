@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwak", "Kwak\Kwak.csproj", "{EC4B624E-6A3F-4F3B-A994-569C8270465E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC4B624E-6A3F-4F3B-A994-569C8270465E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC4B624E-6A3F-4F3B-A994-569C8270465E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC4B624E-6A3F-4F3B-A994-569C8270465E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC4B624E-6A3F-4F3B-A994-569C8270465E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
