@@ -1,4 +1,4 @@
-﻿namespace Kwak;
+﻿namespace Kwak.Game;
 
 public class Game(List<Player> players)
 {
@@ -8,7 +8,7 @@ public class Game(List<Player> players)
   {
     for (var round = 0; round < 9; round++)
     {
-      Kwak.Log($"Round {round + 1} =================");
+      if (Kwak.Log) Console.WriteLine($"Round {round + 1} =================");
 
       // init round
 
@@ -44,7 +44,7 @@ public class Game(List<Player> players)
 
           if (!player.KeepDrawing(player))
           {
-            Kwak.Log($"[{player.Name}] Stops at {player.Board.Money} ({player.Board.Score}) with {player.Board.Whites} whites");
+            if (Kwak.Log) Console.WriteLine($"[{player.Name}] Stops at {player.Board.Money} ({player.Board.Score}) with {player.Board.Whites} whites");
 
             player.Done = true;
             continue;
@@ -54,7 +54,7 @@ public class Game(List<Player> players)
 
           var token = player.Bag.Take();
 
-          Kwak.Log($"[{player.Name}] Plays a {token.TokenColor} {token.Value}");
+          if (Kwak.Log) Console.WriteLine($"[{player.Name}] Plays a {token.TokenColor} {token.Value}");
 
           player.Board.Add(token);
 
@@ -62,7 +62,7 @@ public class Game(List<Player> players)
 
           if (player.IsExploded)
           {
-            Kwak.Log($"[{player.Name}] Exploded at {player.Board.Money} ({player.Board.Score}) with {player.Board.Whites} whites <-------------------");
+            if (Kwak.Log) Console.WriteLine($"[{player.Name}] Exploded at {player.Board.Money} ({player.Board.Score}) with {player.Board.Whites} whites <-------------------");
 
             player.Done = true;
             continue;
@@ -99,35 +99,35 @@ public class Game(List<Player> players)
             case 1:
 
               player.Score += 1;
-              Kwak.Log($"[{player.Name}] Throws the dice for +1 points = {player.Score}");
+              if (Kwak.Log) Console.WriteLine($"[{player.Name}] Throws the dice for +1 points = {player.Score}");
 
               break;
 
             case 2:
 
               player.Score += 2;
-              Kwak.Log($"[{player.Name}] Throws the dice for +2 points = {player.Score}");
+              if (Kwak.Log) Console.WriteLine($"[{player.Name}] Throws the dice for +2 points = {player.Score}");
 
               break;
 
             case 3:
 
               player.Diamonds += 1;
-              Kwak.Log($"[{player.Name}] Throws the dice for +1 diamonds = {player.Diamonds}");
+              if (Kwak.Log) Console.WriteLine($"[{player.Name}] Throws the dice for +1 diamonds = {player.Diamonds}");
 
               break;
 
             case 4:
 
               player.Start += 1;
-              Kwak.Log($"[{player.Name}] Throws the dice for +1 start position = {player.Start}");
+              if (Kwak.Log) Console.WriteLine($"[{player.Name}] Throws the dice for +1 start position = {player.Start}");
 
               break;
 
             case 5:
 
               player.Bag.Add(new() {TokenColor = TokenColor.Orange, Value = 1});
-              Kwak.Log($"[{player.Name}] Throws the dice for an extra Orange 1 token");
+              if (Kwak.Log) Console.WriteLine($"[{player.Name}] Throws the dice for an extra Orange 1 token");
 
               break;
           }
@@ -143,7 +143,7 @@ public class Game(List<Player> players)
         {
           player.Diamonds += player.Board.Diamond;
 
-          Kwak.Log($"[{player.Name}] Receives +{player.Board.Diamond} diamond(s) = {player.Diamonds}");
+          if (Kwak.Log) Console.WriteLine($"[{player.Name}] Receives +{player.Board.Diamond} diamond(s) = {player.Diamonds}");
         }
 
         // award points
@@ -152,7 +152,7 @@ public class Game(List<Player> players)
         {
           player.Score += player.Board.Score;
 
-          Kwak.Log($"[{player.Name}] Scores +{player.Board.Score} points = {player.Score}");
+          if (Kwak.Log) Console.WriteLine($"[{player.Name}] Scores +{player.Board.Score} points = {player.Score}");
         }
 
         // do purchases
@@ -167,7 +167,7 @@ public class Game(List<Player> players)
             {
               player.Bag.Add(token);
 
-              Kwak.Log($"[{player.Name}] Bought a {token.TokenColor} {token.Value} from this rounds' {player.Board.Money} gold");
+              if (Kwak.Log) Console.WriteLine($"[{player.Name}] Bought a {token.TokenColor} {token.Value} from this rounds' {player.Board.Money} gold");
             }
           }
           else
@@ -175,7 +175,7 @@ public class Game(List<Player> players)
             // in the final round, always buy points instead
             player.Score += player.Board.Money / 5;
 
-            Kwak.Log($"[{player.Name}] Bought {player.Board.Money / 5} points from the final rounds' {player.Board.Money} gold");
+            if (Kwak.Log) Console.WriteLine($"[{player.Name}] Bought {player.Board.Money / 5} points from the final rounds' {player.Board.Money} gold");
           }
         }
 
@@ -190,7 +190,7 @@ public class Game(List<Player> players)
             player.Diamonds -= drops * 2;
             player.Start += drops;
 
-            Kwak.Log($"[{player.Name}] Bought +{drops} start position = {player.Start} for -{drops * 2} diamonds = {player.Diamonds}");
+            if (Kwak.Log) Console.WriteLine($"[{player.Name}] Bought +{drops} start position = {player.Start} for -{drops * 2} diamonds = {player.Diamonds}");
           }
         }
         else
@@ -198,7 +198,7 @@ public class Game(List<Player> players)
           // in the final round, always buy points instead
           player.Score += player.Diamonds / 2;
 
-          Kwak.Log($"[{player.Name}] Bought {player.Diamonds / 2} points from the final rounds' remaining {player.Diamonds} diamonds");
+          if (Kwak.Log) Console.WriteLine($"[{player.Name}] Bought {player.Diamonds / 2} points from the final rounds' remaining {player.Diamonds} diamonds");
         }
       }
     }

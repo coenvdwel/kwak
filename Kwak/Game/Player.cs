@@ -1,4 +1,4 @@
-﻿namespace Kwak;
+﻿namespace Kwak.Game;
 
 public class Player
 {
@@ -45,7 +45,7 @@ public class Player
     Bag.Add(new() {TokenColor = TokenColor.White, Value = 2});
     Bag.Add(new() {TokenColor = TokenColor.White, Value = 3});
     Bag.Add(new() {TokenColor = TokenColor.Orange, Value = 1});
-    Bag.Add(new() {TokenColor = TokenColor.Blue, Value = 1});
+    Bag.Add(new() {TokenColor = TokenColor.Green, Value = 1});
   }
 }
 

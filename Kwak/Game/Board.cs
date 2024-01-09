@@ -1,4 +1,4 @@
-﻿namespace Kwak;
+﻿namespace Kwak.Game;
 
 public class Board(Player player)
 {
@@ -34,9 +34,10 @@ public class Board(Player player)
       }
     }
 
-    if (rats > 0) Kwak.Log($"[{Player.Name}] Adding {rats} rats to start at {Position}");
+    if (Kwak.Log && rats > 0) Console.WriteLine($"[{Player.Name}] Adding {rats} rats to start at {Position}");
   }
 
+  // todo; optimize
   public void Add(Token token)
   {
     Position += token.Value;
@@ -79,17 +80,18 @@ public class Board(Player player)
 
         if (extraToken != null)
         {
-          Kwak.Log($"[{Player.Name}] Plays a {extraToken.TokenColor} {extraToken.Value} for their blue token ({string.Join(',', extraTokens.Select(x => $"{x.TokenColor} {x.Value}"))})");
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Plays a {extraToken.TokenColor} {extraToken.Value} for their blue token ({string.Join(',', extraTokens.Select(x => $"{x.TokenColor} {x.Value}"))})");
+
+          extraTokens.Remove(extraToken);
+          Player.Bag.AddRange(extraTokens);
 
           Add(extraToken);
-          extraTokens.Remove(extraToken);
         }
         else
         {
-          Kwak.Log($"[{Player.Name}] Chose to play nothing for their blue token ({string.Join(',', extraTokens.Select(x => $"{x.TokenColor} {x.Value}"))})");
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Chose to play nothing for their blue token ({string.Join(',', extraTokens.Select(x => $"{x.TokenColor} {x.Value}"))})");
+          Player.Bag.AddRange(extraTokens);
         }
-
-        Player.Bag.AddRange(extraTokens);
 
         break;
 
@@ -107,7 +109,7 @@ public class Board(Player player)
             Player.Bag.Add(lastToken);
             Whites -= lastToken.Value;
 
-            Kwak.Log($"[{Player.Name}] A {lastToken.TokenColor} {lastToken.Value} was returned to the bag!");
+            if (Kwak.Log) Console.WriteLine($"[{Player.Name}] A {lastToken.TokenColor} {lastToken.Value} was returned to the bag!");
           }
         }
 
@@ -119,13 +121,14 @@ public class Board(Player player)
     }
   }
 
+  // todo; optimize
   public void EndOfRound()
   {
     // in case the last- or second-to-last token is green, obtain an extra diamond
     if ((Tokens.Count > 0 && Tokens[^1].TokenColor == TokenColor.Green) || (Tokens.Count > 1 && Tokens[^2].TokenColor == TokenColor.Green))
     {
       Player.Diamonds += 1;
-      Kwak.Log($"[{Player.Name}] Green end-of-round bonus: +1 diamond = {Player.Diamonds}");
+      if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Green end-of-round bonus: +1 diamond = {Player.Diamonds}");
     }
 
     // in case we have black tokens, check others and score
@@ -134,26 +137,7 @@ public class Board(Player player)
     {
       var playerIndex = Player.Game.Players.IndexOf(Player);
 
-      if (Player.Game.Players.Count == 2)
-      {
-        var nextPlayer = Player.Game.Players[(playerIndex + 1) % Player.Game.Players.Count];
-        var nextPlayerBlackTokens = nextPlayer.Board.Tokens.Count(x => x.TokenColor == TokenColor.Black);
-
-        if (blackTokens >= nextPlayerBlackTokens)
-        {
-          Player.Start += 1;
-
-          Kwak.Log($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start}");
-        }
-        else if (blackTokens > nextPlayerBlackTokens)
-        {
-          Player.Start += 1;
-          Player.Diamonds += 1;
-
-          Kwak.Log($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start} and +1 diamonds = {Player.Diamonds}");
-        }
-      }
-      else
+      if (Player.Game.Players.Count > 2)
       {
         var nextPlayer = Player.Game.Players[(playerIndex + 1) % Player.Game.Players.Count];
         var nextPlayerBlackTokens = nextPlayer.Board.Tokens.Count(x => x.TokenColor == TokenColor.Black);
@@ -164,14 +148,33 @@ public class Board(Player player)
         {
           Player.Start += 1;
 
-          Kwak.Log($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start}");
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start}");
         }
         else if (blackTokens > nextPlayerBlackTokens && blackTokens > previousPlayerBlackTokens)
         {
           Player.Start += 1;
           Player.Diamonds += 1;
 
-          Kwak.Log($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start} and +1 diamonds = {Player.Diamonds}");
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start} and +1 diamonds = {Player.Diamonds}");
+        }
+      }
+      else
+      {
+        var nextPlayer = Player.Game.Players[(playerIndex + 1) % Player.Game.Players.Count];
+        var nextPlayerBlackTokens = nextPlayer.Board.Tokens.Count(x => x.TokenColor == TokenColor.Black);
+
+        if (blackTokens >= nextPlayerBlackTokens)
+        {
+          Player.Start += 1;
+
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start}");
+        }
+        else if (blackTokens > nextPlayerBlackTokens)
+        {
+          Player.Start += 1;
+          Player.Diamonds += 1;
+
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Black end-of-round bonus: +1 start position = {Player.Start} and +1 diamonds = {Player.Diamonds}");
         }
       }
     }
@@ -182,21 +185,21 @@ public class Board(Player player)
     {
       Player.Score += 1;
 
-      Kwak.Log($"[{Player.Name}] Purple end-of-round bonus (1): +1 point (= {Player.Score})");
+      if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Purple end-of-round bonus (1): +1 point (= {Player.Score})");
     }
     else if (purpleTokens == 2)
     {
       Player.Score += 1;
       Player.Diamonds += 1;
 
-      Kwak.Log($"[{Player.Name}] Purple end-of-round bonus (2): +1 point (= {Player.Score}) and +1 diamond (= {Player.Diamonds})");
+      if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Purple end-of-round bonus (2): +1 point (= {Player.Score}) and +1 diamond (= {Player.Diamonds})");
     }
     else if (purpleTokens > 2)
     {
       Player.Score += 2;
       Player.Start += 1;
 
-      Kwak.Log($"[{Player.Name}] Purple end-of-round bonus (3+): +2 points (= {Player.Score}) and +1 start position (= {Player.Start})");
+      if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Purple end-of-round bonus (3+): +2 points (= {Player.Score}) and +1 start position (= {Player.Start})");
     }
   }
 }

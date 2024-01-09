@@ -1,4 +1,6 @@
-﻿namespace Kwak;
+﻿using Kwak.Game;
+
+namespace Kwak;
 
 // won't do; flask
 // won't do; cards
@@ -8,20 +10,18 @@
 public static class Kwak
 {
   public static readonly Random Random = new(Guid.NewGuid().GetHashCode());
-
-  public static void Log(string s)
-  {
-    //Console.WriteLine(s);
-  }
+  public const bool Log = false;
 
   public static void Main()
   {
-    var numberOfGames = 100_000;
+    Console.WriteLine("Start!");
+
+    var numberOfGames = 10_000;
     var results = new Dictionary<string, Result>();
 
     var players = new List<Player>
     {
-      new("Coen")
+      new("Suus")
       {
         KeepDrawing = Strategies.KeepDrawing.PrettySure,
         Blue = Strategies.Blue.HighestNonWhite,
@@ -31,17 +31,25 @@ public static class Kwak
       },
       new("Kees")
       {
-        KeepDrawing = Strategies.KeepDrawing.NoChances,
+        KeepDrawing = Strategies.KeepDrawing.PrettySure,
         Blue = Strategies.Blue.HighestNonWhite,
         WhenExploded = Strategies.WhenExploded.AlwaysBuy,
-        Buy = Strategies.Buy.PurpleThenDoublesPreferYellow,
+        Buy = Strategies.Buy.RedOrange,
+        Drops = Strategies.Drops.Always
+      },
+      new("Coen")
+      {
+        KeepDrawing = Strategies.KeepDrawing.PrettySure,
+        Blue = Strategies.Blue.HighestNonWhite,
+        WhenExploded = Strategies.WhenExploded.AlwaysBuy,
+        Buy = Strategies.Buy.BlackAndBlue,
         Drops = Strategies.Drops.Always
       }
     };
 
     for (var i = 0; i < numberOfGames; i++)
     {
-      var game = new Game(players);
+      var game = new Game.Game(players);
 
       game.Play();
       game.Process(results);

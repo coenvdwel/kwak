@@ -1,4 +1,6 @@
-﻿namespace Kwak.Strategies;
+﻿using Kwak.Game;
+
+namespace Kwak.Strategies;
 
 public static partial class KeepDrawing
 {

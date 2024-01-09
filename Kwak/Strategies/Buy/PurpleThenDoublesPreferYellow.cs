@@ -1,22 +1,21 @@
-﻿namespace Kwak.Strategies;
+﻿using Kwak.Game;
+
+namespace Kwak.Strategies;
 
 public static partial class Buy
 {
   // first buy to up 5 purples, then prioritize buying 2 if you can, focus on yellow
 
+  // todo; optimize
   public static List<Token> PurpleThenDoublesPreferYellow(Player p)
   {
-    var allTokens = new List<Token>();
     var toBuy = new List<Token>();
     var toSpend = p.Board.Money;
-
-    allTokens.AddRange(p.Board.Tokens);
-    allTokens.AddRange(p.Bag);
 
     // always buy a purple if you can, but no more than 5 total
     if (toBuy.Count < 2 && toSpend >= 9 && toBuy.All(x => x.TokenColor != TokenColor.Purple))
     {
-      if (allTokens.Count(x => x.TokenColor == TokenColor.Purple) < 5)
+      if (!Utility.HasAtLeast(p, TokenColor.Purple, 5))
       {
         toSpend -= 9;
         toBuy.Add(new() {TokenColor = TokenColor.Purple, Value = 1});

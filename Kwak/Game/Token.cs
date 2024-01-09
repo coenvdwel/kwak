@@ -1,4 +1,4 @@
-﻿namespace Kwak;
+﻿namespace Kwak.Game;
 
 public class Token
 {

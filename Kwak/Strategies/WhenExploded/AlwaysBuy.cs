@@ -1,6 +1,8 @@
-﻿namespace Kwak.Strategies;
+﻿using Kwak.Game;
 
-public static partial class WhenExploded
+namespace Kwak.Strategies;
+
+public static class WhenExploded
 {
   // when exploded, always choose to buy, except in the final round where scoring always yields more points
 
