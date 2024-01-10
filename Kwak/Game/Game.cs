@@ -1,29 +1,30 @@
-﻿namespace Kwak.Game;
+﻿using Kwak.Utility;
+
+namespace Kwak.Game;
 
 public class Game(List<Player> players)
 {
+  public int Round { get; set; }
   public List<Player> Players { get; } = players;
 
   public void Play()
   {
-    for (var round = 0; round < 9; round++)
+    Players.ForEach(x => x.Setup(this));
+
+    for (Round = 0; Round < 9; Round++)
     {
-      if (Kwak.Log) Console.WriteLine($"Round {round + 1} =================");
+      if (Kwak.Log) Console.WriteLine($"Round {Round + 1} =================");
 
       // init round
 
-      var mostPoints = Players.Max(x => x.Score);
-
       foreach (var player in Players)
       {
-        player.Game = this;
-        player.Round = round;
+        player.Board.Setup();
+        player.Board.SetupRats();
+
         player.Done = false;
 
-        if (round == 0) player.Reset();
-        if (round == 5) player.Bag.Add(new() {TokenColor = TokenColor.White, Value = 1});
-
-        player.Board.Init(mostPoints);
+        if (Round == 5) player.Bag.Add(Token.Get[TokenColor.White][1]);
       }
 
       // then take turns (as though it's the last round)
@@ -126,7 +127,7 @@ public class Game(List<Player> players)
 
             case 5:
 
-              player.Bag.Add(new() {TokenColor = TokenColor.Orange, Value = 1});
+              player.Bag.Add(Token.Get[TokenColor.Orange][1]);
               if (Kwak.Log) Console.WriteLine($"[{player.Name}] Throws the dice for an extra Orange 1 token");
 
               break;
@@ -159,11 +160,13 @@ public class Game(List<Player> players)
 
         if (canBuy)
         {
-          if (round < 8)
+          if (Round < 8)
           {
-            var tokens = player.Buy(player);
+            var purchase = new Purchase(player);
 
-            foreach (var token in tokens)
+            player.SpendMoney(purchase);
+
+            foreach (var token in purchase.Result)
             {
               player.Bag.Add(token);
 
@@ -181,9 +184,9 @@ public class Game(List<Player> players)
 
         // buy drops
 
-        if (round < 8)
+        if (Round < 8)
         {
-          var drops = player.Drops(player);
+          var drops = player.SpendDiamonds(player);
 
           if (drops > 0)
           {
@@ -202,21 +205,19 @@ public class Game(List<Player> players)
         }
       }
     }
-  }
 
-  public void Process(Dictionary<string, Result> results)
-  {
+    // scoring
+
     var best = Players.Max(x => x.Score);
 
     foreach (var player in Players)
     {
-      if (!results.ContainsKey(player.Name)) results[player.Name] = new();
-      if (player.Score > results[player.Name].MaximumScore) results[player.Name].MaximumScore = player.Score;
-      if (player.Score == best) results[player.Name].Wins += 1;
-      else results[player.Name].Losses += 1;
+      if (player.Score > player.MaximumScore) player.MaximumScore = player.Score;
+      if (player.Score == best) player.Wins += 1;
+      else player.Losses += 1;
 
-      results[player.Name].Games += 1;
-      results[player.Name].TotalScore += player.Score;
+      player.Games += 1;
+      player.TotalScore += player.Score;
     }
   }
 }

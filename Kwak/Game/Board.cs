@@ -17,14 +17,19 @@ public class Board(Player player)
   public static readonly int[] Diamonds = [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0];
   public static readonly HashSet<int> Rats = [1, 4, 7, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48];
 
-  public void Init(int mostPoints)
+  public void Setup()
   {
     Position = Player.Start;
     Whites = 0;
     Player.Bag.AddRange(Tokens);
     Tokens.Clear();
+  }
 
+  public void SetupRats()
+  {
     var rats = 0;
+    var mostPoints = Player.Game!.Players.Max(x => x.Score);
+
     for (var i = Player.Score; i < mostPoints; i++)
     {
       if (Rats.Contains(i % 50))
@@ -68,7 +73,12 @@ public class Board(Player player)
         var oranges = Tokens.Count(x => x.TokenColor == TokenColor.Orange);
         var bonus = oranges > 2 ? 2 : (oranges > 0 ? 1 : 0);
 
-        Position += bonus;
+        if (bonus > 0)
+        {
+          if (Kwak.Log) Console.WriteLine($"[{Player.Name}] Has {oranges} oranges, so adds {bonus} bonus steps to their {token.TokenColor} {token.Value}");
+
+          Position += bonus;
+        }
 
         break;
 
@@ -76,7 +86,7 @@ public class Board(Player player)
       case TokenColor.Blue:
 
         var extraTokens = Player.Bag.Take(token.Value);
-        var extraToken = Player.Blue(Player, extraTokens);
+        var extraToken = Player.ChooseBlueDraws(Player, extraTokens);
 
         if (extraToken != null)
         {

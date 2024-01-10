@@ -1,26 +1,36 @@
-﻿namespace Kwak.Game;
+﻿using Kwak.Utility;
+
+namespace Kwak.Game;
 
 public class Player
 {
+  // overall variables
+  public string Name { get; }
+  public long Wins { get; set; }
+  public long Losses { get; set; }
+  public long Games { get; set; }
+  public long MaximumScore { get; set; }
+  public long TotalScore { get; set; }
+
+  // behavior
+  public Action<Purchase> SpendMoney { get; init; } = Strategies.SpendMoney.Noop;
+  public Func<Player, int> SpendDiamonds { get; init; } = Strategies.SpendDiamonds.Always;
+  public Func<Player, bool> KeepDrawing { get; init; } = Strategies.KeepDrawing.BetterSafeThanSorry;
+  public Func<Player, WhenExplodedResult> WhenExploded { get; init; } = Strategies.WhenExploded.AlwaysBuy;
+  public Func<Player, List<Token>, Token?> ChooseBlueDraws { get; init; } = Strategies.ChooseBlueDraws.HighestNonWhite;
+
+  // game variables
   public int Start { get; set; }
   public int Score { get; set; }
   public int Diamonds { get; set; }
-
-  public Game? Game { get; set; }
-  public int Round { get; set; }
-  public bool Done { get; set; }
-
-  public string Name { get; }
   public Bag Bag { get; }
   public Board Board { get; }
 
-  public bool IsExploded => Board.Whites > 7;
+  // round variables
+  public Game? Game { get; set; }
+  public bool Done { get; set; }
 
-  public required Func<Player, bool> KeepDrawing { get; init; }
-  public required Func<Player, List<Token>, Token?> Blue { get; init; }
-  public required Func<Player, WhenExplodedResult> WhenExploded { get; init; }
-  public required Func<Player, List<Token>> Buy { get; init; }
-  public required Func<Player, int> Drops { get; init; }
+  public bool IsExploded => Board.Whites > 7;
 
   public Player(string name)
   {
@@ -29,23 +39,27 @@ public class Player
     Board = new(this);
   }
 
-  public void Reset()
+  public void Setup(Game game)
   {
+    Game = game;
     Start = Score = Diamonds = 0;
 
-    Bag.Clear();
-    Board.Tokens.Clear();
-    Board.Init(0);
+    Board.Setup();
+    Bag.Setup();
+  }
 
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 1});
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 1});
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 1});
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 1});
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 2});
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 2});
-    Bag.Add(new() {TokenColor = TokenColor.White, Value = 3});
-    Bag.Add(new() {TokenColor = TokenColor.Orange, Value = 1});
-    Bag.Add(new() {TokenColor = TokenColor.Green, Value = 1});
+  public override string ToString()
+  {
+    return $"""
+            ---------------------
+            # {Name}
+            ---------------------
+            Results: {Wins} wins ({Math.Round(Wins / (decimal) Games * 100, 2)}%) / {Losses} losses
+            Total score: {TotalScore}
+            Best score: {MaximumScore}
+            Average score: {TotalScore / Games}
+            
+            """;
   }
 }
 

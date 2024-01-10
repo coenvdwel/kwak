@@ -2,10 +2,8 @@
 
 namespace Kwak.Strategies;
 
-public static class Drops
+public static class SpendDiamonds
 {
-  // always buy drops when you can, as much as you can
-
   public static int Always(Player p)
   {
     return p.Diamonds / 2;

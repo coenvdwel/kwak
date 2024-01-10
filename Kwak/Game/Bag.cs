@@ -2,6 +2,21 @@
 
 public class Bag : List<Token>
 {
+  public void Setup()
+  {
+    Clear();
+    
+    Add(Token.Get[TokenColor.White][1]);
+    Add(Token.Get[TokenColor.White][1]);
+    Add(Token.Get[TokenColor.White][1]);
+    Add(Token.Get[TokenColor.White][1]);
+    Add(Token.Get[TokenColor.White][2]);
+    Add(Token.Get[TokenColor.White][2]);
+    Add(Token.Get[TokenColor.White][3]);
+    Add(Token.Get[TokenColor.Orange][1]);
+    Add(Token.Get[TokenColor.Green][1]);
+  }
+
   public Token Take()
   {
     var i = Kwak.Random.Next(Count - 1);

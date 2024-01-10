@@ -1,79 +1,68 @@
 ﻿using Kwak.Game;
+using Kwak.Strategies;
 
 namespace Kwak;
 
 // won't do; flask
 // won't do; cards
-// todo; introduce yellow/purple at correct round?
-// todo; cheat checks?
 
 public static class Kwak
 {
-  public static readonly Random Random = new(Guid.NewGuid().GetHashCode());
   public const bool Log = false;
+  public const int NumberOfGames = 100_000;
 
-  public static void Main()
+  public static readonly Random Random = new(Guid.NewGuid().GetHashCode());
+
+  public static void Main() => Manual();
+
+  // run a manual set of players to debug scenes
+
+  public static void Manual()
   {
-    Console.WriteLine("Start!");
-
-    var numberOfGames = 10_000;
-    var results = new Dictionary<string, Result>();
-
     var players = new List<Player>
     {
-      new("Suus")
-      {
-        KeepDrawing = Strategies.KeepDrawing.PrettySure,
-        Blue = Strategies.Blue.HighestNonWhite,
-        WhenExploded = Strategies.WhenExploded.AlwaysBuy,
-        Buy = Strategies.Buy.PurpleThenDoublesPreferYellow,
-        Drops = Strategies.Drops.Always
-      },
-      new("Kees")
-      {
-        KeepDrawing = Strategies.KeepDrawing.PrettySure,
-        Blue = Strategies.Blue.HighestNonWhite,
-        WhenExploded = Strategies.WhenExploded.AlwaysBuy,
-        Buy = Strategies.Buy.RedOrange,
-        Drops = Strategies.Drops.Always
-      },
-      new("Coen")
-      {
-        KeepDrawing = Strategies.KeepDrawing.PrettySure,
-        Blue = Strategies.Blue.HighestNonWhite,
-        WhenExploded = Strategies.WhenExploded.AlwaysBuy,
-        Buy = Strategies.Buy.BlackAndBlue,
-        Drops = Strategies.Drops.Always
-      }
+      new(nameof(SpendMoney.RedAndOrange)) {SpendMoney = SpendMoney.RedAndOrange},
+      new(nameof(SpendMoney.PurpleAndYellow)) {SpendMoney = SpendMoney.PurpleAndYellow},
+      new(nameof(SpendMoney.PurpleAndBlue)) {SpendMoney = SpendMoney.PurpleAndBlue},
+      new(nameof(SpendMoney.BlackAndBlue)) {SpendMoney = SpendMoney.BlackAndBlue}
     };
 
-    for (var i = 0; i < numberOfGames; i++)
+    for (var i = 0; i < NumberOfGames; i++)
     {
-      var game = new Game.Game(players);
-
-      game.Play();
-      game.Process(results);
+      new Game.Game(players).Play();
     }
 
-    foreach (var (player, result) in results)
+    foreach (var player in players.OrderByDescending(x => x.Wins))
     {
-      Console.WriteLine(player);
-      Console.WriteLine($"- Wins: {result.Wins}");
-      Console.WriteLine($"- Losses: {result.Losses}");
-      Console.WriteLine($"- Games: {result.Games}");
-      Console.WriteLine($"- MaximumScore: {result.MaximumScore}");
-      Console.WriteLine($"- TotalScore: {result.TotalScore}");
-      Console.WriteLine($"- AverageScore: {result.TotalScore / result.Games}");
-      Console.WriteLine($"- WinRate: {result.Wins / (decimal) result.Games}");
+      Console.WriteLine(player.ToString());
     }
   }
-}
 
-public class Result
-{
-  public long Wins { get; set; }
-  public long Losses { get; set; }
-  public long Games { get; set; }
-  public long MaximumScore { get; set; }
-  public long TotalScore { get; set; }
+  // evolve players genetically to find the best strategy
+
+  public static void Evolve(int generations)
+  {
+    var players = new List<Player> {new("gx-0"), new("gx-1"), new("gx-2"), new("gx-3")};
+
+    for (var g = 0; g < generations; g++)
+    {
+      // remove the weakest players
+      players.Remove(players.OrderBy(x => x.Wins).First());
+      players.Remove(players.OrderBy(x => x.Wins).First());
+
+      // generate 2 new, random players
+      players.Add(new($"g{g}-0")); // todo
+      players.Add(new($"g{g}-1")); // todo
+
+      for (var i = 0; i < NumberOfGames; i++)
+      {
+        new Game.Game(players).Play();
+      }
+    }
+
+    foreach (var player in players.OrderByDescending(x => x.Wins))
+    {
+      Console.WriteLine(player.ToString());
+    }
+  }
 }

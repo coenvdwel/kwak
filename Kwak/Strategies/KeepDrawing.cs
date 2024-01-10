@@ -2,11 +2,9 @@
 
 namespace Kwak.Strategies;
 
-public static partial class KeepDrawing
+public static class KeepDrawing
 {
-  // only draw when you're pretty sure you won't die (80% survival)
-
-  public static bool PrettySure(Player p)
+  public static bool BetterSafeThanSorry(Player p)
   {
     var pointsLeft = 7 - p.Board.Whites;
 
