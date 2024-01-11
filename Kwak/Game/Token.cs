@@ -2,9 +2,9 @@
 
 public class Token(TokenColor color, int value, int cost)
 {
-  public TokenColor TokenColor { get; set; } = color;
-  public int Value { get; set; } = value;
-  public int Cost { get; set; } = cost;
+  public TokenColor TokenColor { get; } = color;
+  public int Value { get; } = value;
+  public int Cost { get; } = cost;
 
   public static readonly Dictionary<TokenColor, Dictionary<int, Token>> Get = new()
   {

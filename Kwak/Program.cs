@@ -24,7 +24,7 @@ public static class Kwak
       new(nameof(SpendMoney.RedAndOrange)) {SpendMoney = SpendMoney.RedAndOrange},
       new(nameof(SpendMoney.PurpleAndYellow)) {SpendMoney = SpendMoney.PurpleAndYellow},
       new(nameof(SpendMoney.PurpleAndBlue)) {SpendMoney = SpendMoney.PurpleAndBlue},
-      new(nameof(SpendMoney.BlackAndBlue)) {SpendMoney = SpendMoney.BlackAndBlue}
+      new(nameof(SpendMoney.Blue)) {SpendMoney = SpendMoney.Blue}
     };
 
     for (var i = 0; i < NumberOfGames; i++)

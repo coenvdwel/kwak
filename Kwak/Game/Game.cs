@@ -19,8 +19,10 @@ public class Game(List<Player> players)
 
       foreach (var player in Players)
       {
+        var mostPoints = Players.Max(x => x.Score);
+
         player.Board.Setup();
-        player.Board.SetupRats();
+        player.Board.SetupRats(mostPoints);
 
         player.Done = false;
 
@@ -38,7 +40,7 @@ public class Game(List<Player> players)
         foreach (var player in Players)
         {
           if (player.Bag.Count == 0) continue;
-          if (player.Board.Position == 33) continue;
+          if (player.Board.Position == 52) continue;
           if (player.Done) continue;
 
           // when a player indicates they want to stop, do so
@@ -79,17 +81,6 @@ public class Game(List<Player> players)
 
       foreach (var player in Players)
       {
-        var canScore = true;
-        var canBuy = true;
-
-        if (player.IsExploded)
-        {
-          var whenExploded = player.WhenExploded(player);
-
-          canScore &= whenExploded == WhenExplodedResult.Score;
-          canBuy &= whenExploded == WhenExplodedResult.Buy;
-        }
-
         // throw the dice if applicable
 
         if (!player.IsExploded && player.Board.Position == highestPosition)
@@ -145,6 +136,19 @@ public class Game(List<Player> players)
           player.Diamonds += player.Board.Diamond;
 
           if (Kwak.Log) Console.WriteLine($"[{player.Name}] Receives +{player.Board.Diamond} diamond(s) = {player.Diamonds}");
+        }
+
+        // determine explosion consequences if applicable
+
+        var canScore = true;
+        var canBuy = true;
+
+        if (player.IsExploded)
+        {
+          var whenExploded = player.WhenExploded(player);
+
+          canScore &= whenExploded == WhenExplodedResult.Score;
+          canBuy &= whenExploded == WhenExplodedResult.Buy;
         }
 
         // award points

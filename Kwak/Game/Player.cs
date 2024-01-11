@@ -58,7 +58,7 @@ public class Player
             Total score: {TotalScore}
             Best score: {MaximumScore}
             Average score: {TotalScore / Games}
-            
+
             """;
   }
 }
