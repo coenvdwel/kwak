@@ -8,7 +8,7 @@ public class Purchase(Player player)
   public List<Token> Result { get; } = [];
   public int Money { get; private set; } = player.Board.Money;
 
-  public bool Buy(TokenColor color, int value, int? max = null, int minLeftOver = 0)
+  public bool Buy(TokenColor color, int value, int? max = null, bool withSecondBuy = false)
   {
     if (color == TokenColor.Yellow && Player.Game!.Round == 0) return false;
     if (color == TokenColor.Purple && Player.Game!.Round <= 1) return false;
@@ -17,7 +17,8 @@ public class Purchase(Player player)
 
     var token = Token.Get[color][value];
 
-    if (token.Cost + minLeftOver > Money) return false;
+    if (token.Cost > Money) return false;
+    if (withSecondBuy && Result.Count == 0 && token.Cost + 3 > Money) return false;
     if (max != null && HasAtLeast(color, max.Value)) return false;
 
     Money -= token.Cost;

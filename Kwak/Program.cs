@@ -21,10 +21,10 @@ public static class Kwak
   {
     var players = new List<Player>
     {
-      new(nameof(SpendMoney.RedAndOrange)) {SpendMoney = SpendMoney.RedAndOrange},
       new(nameof(SpendMoney.PurpleAndYellow)) {SpendMoney = SpendMoney.PurpleAndYellow},
+      new(nameof(SpendMoney.RedAndOrange)) {SpendMoney = SpendMoney.RedAndOrange},
       new(nameof(SpendMoney.PurpleAndBlue)) {SpendMoney = SpendMoney.PurpleAndBlue},
-      new(nameof(SpendMoney.Blue)) {SpendMoney = SpendMoney.Blue}
+      new(nameof(SpendMoney.BigTokens)) {SpendMoney = SpendMoney.BigTokens}
     };
 
     for (var i = 0; i < NumberOfGames; i++)

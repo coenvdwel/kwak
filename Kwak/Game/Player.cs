@@ -13,7 +13,7 @@ public class Player
   public long TotalScore { get; set; }
 
   // behavior
-  public Action<Purchase> SpendMoney { get; init; } = Strategies.SpendMoney.Noop;
+  public Action<Purchase> SpendMoney { get; init; } = Strategies.SpendMoney.Random;
   public Func<Player, int> SpendDiamonds { get; init; } = Strategies.SpendDiamonds.Always;
   public Func<Player, bool> KeepDrawing { get; init; } = Strategies.KeepDrawing.BetterSafeThanSorry;
   public Func<Player, WhenExplodedResult> WhenExploded { get; init; } = Strategies.WhenExploded.AlwaysBuy;
